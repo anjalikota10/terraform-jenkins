@@ -3,12 +3,12 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "./modules/vpc"
+  source = "./vpc_module/vpc"
   cidr_block = "10.0.0.0/16"
 }
 
 module "public_subnets" {
-  source          = "./modules/subnet"
+  source          = "./vpc_module/subnet"
   vpc_id          = module.vpc.vpc_id
   cidr_blocks     = ["10.0.1.0/24", "10.0.2.0/24"]
   availability_zones = ["us-west-2a", "us-west-2b"]
@@ -16,7 +16,7 @@ module "public_subnets" {
 }
 
 module "private_subnets" {
-  source          = "./modules/subnet"
+  source          = "./vpc_module/subnet"
   vpc_id          = module.vpc.vpc_id
   cidr_blocks     = ["10.0.3.0/24", "10.0.4.0/24"]
   availability_zones = ["us-west-2a", "us-west-2b"]
@@ -24,18 +24,18 @@ module "private_subnets" {
 }
 
 module "igw" {
-  source  = "./modules/internet_gateway"
+  source  = "./vpc_module/internet_gateway"
   vpc_id  = module.vpc.vpc_id
 }
 
 module "nat_gateway" {
-  source           = "./modules/nat_gateway"
+  source           = "./vpc_module/nat_gateway"
   public_subnet_id = module.public_subnets.subnet_ids[0] # NAT in first public subnet
   allocation_id    = aws_eip.nat_eip.id
 }
 
 module "public_route_table" {
-  source               = "./modules/route_table"
+  source               = "./vpc_module/route_table"
   vpc_id               = module.vpc.vpc_id
   igw_id               = module.igw.igw_id
   subnet_ids           = module.public_subnets.subnet_ids
@@ -43,7 +43,7 @@ module "public_route_table" {
 }
 
 module "private_route_table" {
-  source               = "./modules/route_table"
+  source               = "./vpc_module/route_table"
   vpc_id               = module.vpc.vpc_id
   nat_gateway_id       = module.nat_gateway.nat_gateway_id
   subnet_ids           = module.private_subnets.subnet_ids
