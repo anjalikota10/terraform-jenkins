@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ap-south-1" # Specify your region
+  region = "us-west-2" # Specify your region
 }
 
 module "vpc" {
@@ -11,7 +11,7 @@ module "public_subnets" {
   source          = "./modules/subnet"
   vpc_id          = module.vpc.vpc_id
   cidr_blocks     = ["10.0.1.0/24", "10.0.2.0/24"]
-  availability_zones = ["ap-south-1a", "ap-south-1b"]
+  availability_zones = ["us-west-2a", "us-west-2b"]
   public          = true
 }
 
@@ -19,7 +19,7 @@ module "private_subnets" {
   source          = "./modules/subnet"
   vpc_id          = module.vpc.vpc_id
   cidr_blocks     = ["10.0.3.0/24", "10.0.4.0/24"]
-  availability_zones = ["ap-south-1a", "ap-south-1b"]
+  availability_zones = ["us-west-2a", "us-west-2b"]
   public          = false
 }
 
