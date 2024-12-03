@@ -24,12 +24,12 @@ module "private_subnets" {
 }
 
 module "igw" {
-  source  = "./vpc_module/internet_gateway"
+  source  = "./vpc_module/IGW"
   vpc_id  = module.vpc.vpc_id
 }
 
 module "nat_gateway" {
-  source           = "./vpc_module/nat_gateway"
+  source           = "./vpc_module/NAT"
   public_subnet_id = module.public_subnets.subnet_ids[0] # NAT in first public subnet
   allocation_id    = aws_eip.nat_eip.id
 }
