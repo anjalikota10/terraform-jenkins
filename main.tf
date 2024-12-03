@@ -50,3 +50,8 @@ module "private_route_table" {
   public               = false
 }
 
+resource "aws_eip" "nat_eip" {
+  vpc = true
+}
+
+
