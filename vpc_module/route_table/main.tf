@@ -6,19 +6,9 @@ resource "aws_route" "this" {
   route_table_id = aws_route_table.this.id
   destination_cidr_block = "0.0.0.0/0"
 
-  dynamic "gateway_id" {
-    for_each = var.public ? [1] : []
-    content {
-      gateway_id = var.igw_id
-    }
-  }
-
-  dynamic "nat_gateway_id" {
-    for_each = var.public ? [] : [1]
-    content {
-      nat_gateway_id = var.nat_gateway_id
-    }
-  }
+  # Conditionally set gateway_id or nat_gateway_id
+  gateway_id      = var.public ? var.igw_id : null
+  nat_gateway_id  = var.public ? null : var.nat_gateway_id
 }
 
 resource "aws_route_table_association" "this" {
