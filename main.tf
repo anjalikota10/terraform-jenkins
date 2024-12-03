@@ -34,6 +34,11 @@ module "nat_gateway" {
   allocation_id    = aws_eip.nat_eip.id
 }
 
+resource "aws_eip" "nat_eip" {
+  vpc = true
+}
+
+
 
 module "public_route_table" {
   source               = "./vpc_module/route_table"
@@ -49,10 +54,6 @@ module "private_route_table" {
   nat_gateway_id       = module.nat_gateway.nat_gateway_id
   subnet_ids           = module.private_subnets.subnet_ids
   public               = false
-}
-
-resource "aws_eip" "nat_eip" {
-  domain = "vpc"
 }
 
 
