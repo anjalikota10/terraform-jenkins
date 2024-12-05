@@ -35,8 +35,9 @@ module "nat_gateway" {
 }
 
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  domain = "vpc"
 }
+
 
 module "public_route_table" {
   source               = "./vpc_module/route_table"

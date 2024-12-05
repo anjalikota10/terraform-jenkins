@@ -31,7 +31,7 @@ resource "aws_eks_cluster" "cluster" {
   }
 }
 
-# IAM role for EKS Worker Nodes
+# IAM role for the EKS Worker Nodes
 resource "aws_iam_role" "eks_worker_role" {
   name = var.eks_worker_role_name
 
@@ -47,13 +47,20 @@ resource "aws_iam_role" "eks_worker_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "eks_worker_policies" {
+# Attach IAM policies to the worker role
+resource "aws_iam_role_policy_attachment" "ecr_readonly" {
   role       = aws_iam_role.eks_worker_role.name
-  policy_arn = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  ]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "cni_policy" {
+  role       = aws_iam_role.eks_worker_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
+  role       = aws_iam_role.eks_worker_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
 # EKS Node Group
@@ -70,5 +77,5 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   instance_types = var.instance_types
-  
 }
+
