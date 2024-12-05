@@ -4,22 +4,22 @@ provider "aws" {
 
 module "vpc" {
   source = "./vpc_module/vpc"
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr_block
 }
 
 module "public_subnets" {
   source          = "./vpc_module/subnet"
   vpc_id          = module.vpc.vpc_id
-  cidr_blocks     = ["10.0.1.0/24", "10.0.2.0/24"]
-  availability_zones = ["us-west-2a", "us-west-2b"]
+  cidr_blocks     = var.public_subnet_cidr_blocks
+  availability_zones = var.availability_zones
   public          = true
 }
 
 module "private_subnets" {
   source          = "./vpc_module/subnet"
   vpc_id          = module.vpc.vpc_id
-  cidr_blocks     = ["10.0.3.0/24", "10.0.4.0/24"]
-  availability_zones = ["us-west-2a", "us-west-2b"]
+  cidr_blocks     = var.private_subnet_cidr_blocks
+  availability_zones = var.availability_zones
   public          = false
 }
 
@@ -38,8 +38,6 @@ resource "aws_eip" "nat_eip" {
   vpc = true
 }
 
-
-
 module "public_route_table" {
   source               = "./vpc_module/route_table"
   vpc_id               = module.vpc.vpc_id
@@ -56,5 +54,19 @@ module "private_route_table" {
   public               = false
 }
 
+# Call the EKS module
+module "eks_cluster" {
+  source = "./eks_module" # Path to your EKS module
 
-
+  cluster_name           = "EKS-cluster"
+  vpc_id                 = module.vpc.vpc_id
+  subnet_ids             = module.private_subnets.subnet_ids # Using private subnets for worker nodes
+  public_subnet_ids      = module.public_subnets.subnet_ids
+  eks_cluster_role_name  = "EKSclusterrole1"
+  eks_worker_role_name   = "workernodepolicy"
+  desired_size           = 2
+  min_size               = 1
+  max_size               = 3
+  instance_types         = ["t2.micro"]
+  cluster_version        = "1.29"
+}
