@@ -49,7 +49,7 @@ resource "aws_iam_role" "eks_worker_role" {
 
 resource "aws_iam_role_policy_attachment" "eks_worker_policies" {
   role       = aws_iam_role.eks_worker_role.name
-  policy_arns = [
+  policy_arn = [
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
