@@ -70,4 +70,5 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   instance_types = var.instance_types
-
+  
+}
