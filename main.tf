@@ -68,6 +68,6 @@ module "eks_cluster" {
   desired_size           = 2
   min_size               = 1
   max_size               = 3
-  instance_types         = ["t2.micro"]
+  instance_types         = ["t2.medium"]
   cluster_version        = "1.29"
 }
