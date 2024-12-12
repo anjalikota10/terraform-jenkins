@@ -23,11 +23,7 @@ pipeline {
                 sh 'terraform plan'
             }
         }
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform apply -auto-approve'
-            }
-        }
+        
         stage('Terraform Destroy') {
             when {
                 expression { params.DESTROY } // Add a condition to control when to destroy
@@ -38,6 +34,6 @@ pipeline {
         }
     }
     parameters {
-        booleanParam(name: 'DESTROY', defaultValue: false, description: 'Set to true to destroy the infrastructure')
+        booleanParam(name: 'DESTROY', defaultValue: true, description: 'Set to true to destroy the infrastructure')
     }
 }
